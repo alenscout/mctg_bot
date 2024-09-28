@@ -1,26 +1,16 @@
+from config import TOKEN
 import asyncio
 from aiogram import Bot, Dispatcher, types , F
 from aiogram.types import Message
-from aiogram.filters import Command
+from aiogram.filters import Command, CommandStart
 from aiogram.utils import executor
-
 import logging
 
-# ''' Логика логгинга для дебаггинга'''
-
-# logging.basicConfig(
-#     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', 
-#     level=logging.INFO
-# )
-
-# logger = logging.getLogger(__name__)
-
 #Первичная логика бота 
-token = '7662550517:AAENRwR_vkBMqpzuu0BBCV9X2HpYd3tT0ME'
-bot = Bot(token=token) 
+bot = Bot(token=TOKEN) 
 dp = Dispatcher()
 
-@dp.message(Command('start'))
+@dp.message(CommandStart())
 async def start(message: Message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("📋Список команд")
@@ -45,11 +35,11 @@ async def btn2(message: Message):
 #@bot.message_handler(func=lambda message: message.text == "test1")
 #def btn3(message):
 #    test1(message)   
-    
+
+@dp.message(Command('help'))    
 async def help(message: Message):
     await message.answer("Список команд: /start , /help , /list")
 
-    
 ''' Тестирование '''   
 
    
@@ -162,8 +152,13 @@ async def help(message: Message):
 
 ''' Запуск бота '''
 
-# async def main():
-#     await dp.start_polling(bot)
+async def main():
+    await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True)
+    logging.basicConfig(level=logging.INFO)
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print('Exit')
+    
